@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ATC Intelligence Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="atc-root">
+  <div class="classification-bar">Ground Station Operations — Authorised Personnel Only</div>
+
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-mark"><div class="sys">SYS</div><div>ATC</div></div>
+      <div>
+        <div class="title"><span class="tag">ASR-FOR-ATC</span>Air Traffic Control <span class="g">Intelligence</span> Console</div>
+        <div class="subtitle"><span class="dot"></span>operational · real-time voice comms transcription &amp; analysis</div>
+      </div>
+    </div>
+    <div class="header-stats" id="headerStats"></div>
+  </div>
+
+  <div class="stats-bar" id="statsBar"></div>
+
+  <div class="top-grid">
+    <div class="panel">
+      <div class="panel-head"><span class="panel-label">Transcribe New Audio File</span><span class="spin" id="spinner" hidden>Processing...</span></div>
+      <form id="form" class="form-row">
+        <div class="field"><label class="flabel">Audio File</label><input type="file" id="file" accept="audio/*" required></div>
+        <div class="field lang"><span>Language = English</span></div>
+        <div class="field"><label class="flabel">Compute Device</label>
+          <select id="device"><option value="auto">Auto Detect</option><option value="cuda">CUDA (GPU)</option><option value="cpu">CPU (Lightweight)</option></select></div>
+        <div class="field"><label class="flabel">Noise Removal</label><div class="chk"><input type="checkbox" id="noise" checked><label for="noise">Enable</label></div></div>
+        <div class="field"><label class="flabel">Noise Red. Coeff.</label><input type="number" id="nr" min="0" max="1" step="0.05" value="0.75"></div>
+        <div class="field"><label class="flabel">Save Chunks</label><div class="chk"><input type="checkbox" id="saveChunks" checked><label for="saveChunks">Enable</label></div></div>
+        <button type="submit" id="submitBtn" class="btn submit-btn" disabled>Upload &amp; Transcribe</button>
+      </form>
+      <div class="status" id="status"></div><div class="error" id="error"></div>
+    </div>
+
+    <div class="panel hist-panel">
+      <div>
+        <div class="panel-head"><span class="panel-label">Transcription History</span><span class="spin" id="hLoad" hidden>Loading...</span></div>
+        <div class="history-list" id="historyList"></div>
+      </div>
+      <div class="pager" id="pager" hidden>
+        <button class="btn pbtn" data-act="hprev">◀ Prev</button><span id="pageTxt"></span><button class="btn pbtn" data-act="hnext">Next ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="row wrap">
+        <span class="panel-label">audio timeline</span>
+        <div class="sync"><span class="sync-l" title="Adjust glow timing lead">⚡ Glow Sync:</span>
+          <input type="range" id="lead" min="-0.3" max="0.5" step="0.02" value="0.12"><span class="badge" id="leadBadge"></span>
+          <button class="btn preset" data-lead="0">0ms</button><button class="btn preset" data-lead="0.12">+120ms</button><button class="btn preset" data-lead="0.25">+250ms</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="toggle"><button class="btn" data-fvar="filtered">filtered</button><button class="btn" data-fvar="denoised">denoised</button></div>
+        <span class="timecode" id="timecode"></span>
+        <button class="btn play" id="playBtn">▶ play</button>
+      </div>
+    </div>
+    <canvas id="wave"></canvas>
+    <div class="hud" id="hud"></div>
+  </div>
+
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-head">
+        <div class="row"><span class="panel-label">transcript</span><span class="unsaved" id="unsaved" hidden>● unsaved edits</span></div>
+        <div class="row">
+          <button class="btn save-btn" id="saveBtn" data-act="save">💾 save to database</button>
+          <div class="toggle"><button class="btn" data-view="segments">segments</button><button class="btn" data-view="full">full text</button></div>
+        </div>
+      </div>
+      <div id="transcript"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span class="panel-label">intermediate audio pipeline</span><span class="chunk-count" id="chunkCount"></span></div>
+      <div id="chunkBody"></div>
+    </div>
+  </div>
+
+  <div class="footer">CRISP ATC Console — Real-time Air Traffic Control speech transcription, spectral noise filtering, and millisecond-synchronized word playback.</div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

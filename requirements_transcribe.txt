@@ -1,0 +1,11 @@
+numpy
+scipy
+librosa
+soundfile
+noisereduce
+fastapi
+uvicorn
+python-multipart
+# gguf
+# torch
+# sentencepiece

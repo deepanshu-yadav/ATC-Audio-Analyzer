@@ -1,0 +1,7 @@
+venv/*
+output/*
+models/ggufs/*
+models/vad/*
+bin/*
+*.db
+__pycache__/*
