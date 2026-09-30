@@ -54,8 +54,6 @@ backend/
 ### 1. Set Up Python Virtual Environment
 
 ```bash
-# Navigate to backend directory
-cd backend
 
 # Create virtual environment
 python -m venv venv
@@ -143,6 +141,30 @@ The server starts at `http://127.0.0.1:8000`:
 - Play original vs. cleaned audio directly in the browser.
 - View segmented transcriptions with timestamps and confidence scores.
 - Search and review past transcription history stored in SQLite.
+
+---
+
+## Application Screenshots
+
+### 1. File Upload & Transcription History
+Upload ATC audio files (WAV, MP3, OGG, FLAC), customize audio pre-processing and device settings, and review prior transcription runs recorded in SQLite:
+
+![File Upload & Transcription History](images/file%20upload%20and%20transcription%20history.png)
+
+### 2. Audio Playback & Analysis
+Inspect segmented transcription results with timestamps and confidence scores while playing back synchronized original and noise-reduced audio streams:
+
+![Audio Playback and Analysis](images/playing%20and%20analyze.png)
+
+### 3. Chunk Selection & Configuration
+Configure audio chunk durations and overlap boundaries for long audio recordings to optimize parallel transcription worker processing:
+
+![Chunk Selection](images/chunk%20selection.png)
+
+### 4. Noise Reduction Pipeline Debugging
+Debug audio pre-processing in real-time, visualizing waveform filtering, spectral noise reduction, and intermediate audio output artifacts:
+
+![Debugging Noise Reduction Pipeline](images/debugging%20the%20noise%20reduction%20pipeline.png)
 
 ---
 
