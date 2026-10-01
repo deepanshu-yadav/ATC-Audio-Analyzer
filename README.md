@@ -20,7 +20,7 @@ Includes a **FastAPI backend**, an interactive **web application UI**, and a **C
 ## Directory Structure
 
 ```text
-backend/
+
 ├── app.py                         # FastAPI web server and REST API
 ├── run_transcription.py           # CLI runner for transcription with auto-chunking
 ├── transcribe_atc.py              # Core transcription pipeline and CrispASR wrapper
@@ -72,7 +72,7 @@ pip install -r requirements_transcribe.txt
 
 ### 2. Download Models and CrispASR Binaries
 
-We provide an automated setup script [`download_models_and_bins.py`](file:///c:/Users/DEEPANSHU/Desktop/workspace/atc/backend/download_models_and_bins.py) that fetches both the speech recognition model, Silero VAD, and the appropriate CrispASR binaries.
+We provide an automated setup script [`download_models_and_bins.py`](download_models_and_bins.py) that fetches both the speech recognition model, Silero VAD, and the appropriate CrispASR binaries.
 
 #### Option A: Automatic Setup (Recommended)
 
@@ -94,25 +94,25 @@ If you prefer to download components manually:
 1. **ATC Speech Model (GGUF)**:
    - **Repository**: [pronoobie/Parakeet-v3-For_ATC](https://huggingface.co/pronoobie/Parakeet-v3-For_ATC)
    - **File**: [`speech-model.gguf`](https://huggingface.co/pronoobie/Parakeet-v3-For_ATC/blob/main/speech-model.gguf)
-   - Place into: `backend/models/ggufs/speech-model.gguf`
+   - Place into: `models/ggufs/speech-model.gguf`
 
 2. **Silero VAD Model**:
    - **Download**: [ggml-silero-v6.2.0.bin](https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin)
-   - Place into: `backend/models/vad/ggml-silero-v6.2.0.bin`
+   - Place into: `models/vad/ggml-silero-v6.2.0.bin`
 
 3. **CrispASR Release Binaries (v0.8.39)**:
    - **Releases Page**: [CrispASR Releases v0.8.39](https://github.com/CrispStrobe/CrispASR/releases/tag/v0.8.39)
-   - Extract into `backend/bin/cpu/` or `backend/bin/cuda/`:
+   - Extract into `bin/cpu/` or `bin/cuda/`:
 
-   | OS / Target | Recommended Release Archive | Extract Destination |
-   | :--- | :--- | :--- |
-   | **Windows (CPU)** | `crispasr-windows-x86_64-cpu.zip` | `backend/bin/cpu/` |
-   | **Windows (Legacy CPU)** | `crispasr-windows-x86_64-cpu-legacy.zip` | `backend/bin/cpu/` |
-   | **Windows (CUDA / NVIDIA)** | `crispasr-windows-x86_64-cuda.zip` | `backend/bin/cuda/` |
-   | **Windows (CUDA 13)** | `crispasr-windows-x86_64-cuda13.zip` | `backend/bin/cuda/` |
-   | **Linux (CPU)** | `crispasr-linux-x86_64.tar.gz` | `backend/bin/cpu/` |
-   | **Linux (CUDA)** | `crispasr-linux-x86_64-cuda.tar.gz` | `backend/bin/cuda/` |
-   | **macOS (Apple Silicon)** | `crispasr-macos-arm64.tar.gz` | `backend/bin/cpu/` |
+| OS / Target                 | Recommended Release Archive              | Extract Destination |
+| :----------------------------| :-----------------------------------------| :--------------------|
+| **Windows (CPU)**           | `crispasr-windows-x86_64-cpu.zip`        | `bin/cpu/`          |
+| **Windows (Legacy CPU)**    | `crispasr-windows-x86_64-cpu-legacy.zip` | `bin/cpu/`          |
+| **Windows (CUDA / NVIDIA)** | `crispasr-windows-x86_64-cuda.zip`       | `bin/cuda/`         |
+| **Windows (CUDA 13)**       | `crispasr-windows-x86_64-cuda13.zip`     | `bin/cuda/`         |
+| **Linux (CPU)**             | `crispasr-linux-x86_64.tar.gz`           | `bin/cpu/`          |
+| **Linux (CUDA)**            | `crispasr-linux-x86_64-cuda.tar.gz`      | `bin/cuda/`         |
+| **macOS (Apple Silicon)**   | `crispasr-macos-arm64.tar.gz`            | `bin/cpu/`          |
 
 > [!NOTE]
 > Make sure the folder contains `crispasr.exe` (or `crispasr` on Linux) and any accompanying `.dll` or `.so` libraries (such as `openblas.dll` or CUDA DLLs).
@@ -170,7 +170,7 @@ Debug audio pre-processing in real-time, visualizing waveform filtering, spectra
 
 ### 2. Command-Line Transcription (CLI)
 
-You can transcribe audio files directly via command line using [`run_transcription.py`](file:///c:/Users/DEEPANSHU/Desktop/workspace/atc/backend/run_transcription.py):
+You can transcribe audio files directly via command line using [`run_transcription.py`](run_transcription.py):
 
 ```bash
 # Transcribe single file (auto-detects CPU/CUDA and chunking)

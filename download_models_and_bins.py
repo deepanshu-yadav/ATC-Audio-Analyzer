@@ -104,8 +104,12 @@ BINARY_TARGETS = {
 }
 
 
-def get_backend_dir() -> Path:
+def get_project_dir() -> Path:
     return Path(__file__).resolve().parent
+
+
+# Backward compatibility alias
+get_backend_dir = get_project_dir
 
 
 def detect_platform() -> str:
@@ -216,7 +220,7 @@ def extract_archive(archive_path: Path, target_dir: Path):
     print(f"  [OK] Extracted to {target_dir}")
 
 
-def download_binary(platform_key: str, device_key: str, backend_dir: Path, force: bool = False):
+def download_binary(platform_key: str, device_key: str, project_dir: Path, force: bool = False):
     """Download and extract CrispASR binary for the given platform and device."""
     platform_map = BINARY_TARGETS.get(platform_key)
     if not platform_map:
@@ -231,7 +235,7 @@ def download_binary(platform_key: str, device_key: str, backend_dir: Path, force
     description = device_info["description"]
     url = f"{GITHUB_RELEASE_BASE}/{archive_name}"
 
-    bin_dir = backend_dir / "bin" / dest_subdir
+    bin_dir = project_dir / "bin" / dest_subdir
     bin_dir.mkdir(parents=True, exist_ok=True)
 
     exe_candidates = ["crispasr.exe", "crispasr"]
@@ -241,7 +245,7 @@ def download_binary(platform_key: str, device_key: str, backend_dir: Path, force
         print(f"[Skip] Binary already present in {bin_dir} ({description}). Use --force to re-download.")
         return
 
-    temp_archive = backend_dir / "bin" / archive_name
+    temp_archive = project_dir / "bin" / archive_name
     try:
         download_file(url, temp_archive, description=f"CrispASR binary ({description})")
         extract_archive(temp_archive, bin_dir)
@@ -250,9 +254,9 @@ def download_binary(platform_key: str, device_key: str, backend_dir: Path, force
             temp_archive.unlink()
 
 
-def download_speech_model(backend_dir: Path, force: bool = False):
+def download_speech_model(project_dir: Path, force: bool = False):
     """Download Parakeet-v3 GGUF speech model for ATC."""
-    model_dir = backend_dir / "models" / "ggufs"
+    model_dir = project_dir / "models" / "ggufs"
     model_file = model_dir / "speech-model.gguf"
 
     if model_file.exists() and not force:
@@ -263,9 +267,9 @@ def download_speech_model(backend_dir: Path, force: bool = False):
     download_file(PARAKEET_MODEL_URL, model_file, description="Parakeet-v3 ATC Speech Model (GGUF)")
 
 
-def download_vad_model(backend_dir: Path, force: bool = False):
+def download_vad_model(project_dir: Path, force: bool = False):
     """Download Silero VAD model."""
-    vad_dir = backend_dir / "models" / "vad"
+    vad_dir = project_dir / "models" / "vad"
     vad_file = vad_dir / "ggml-silero-v6.2.0.bin"
 
     if vad_file.exists() and not force:
@@ -307,12 +311,12 @@ def main():
     )
 
     args = parser.parse_args()
-    backend_dir = get_backend_dir()
+    project_dir = get_project_dir()
 
     plat = detect_platform() if args.platform == "auto" else args.platform
     print(f"=== ATC Transcription Setup & Downloader ===")
     print(f"Platform: {plat}")
-    print(f"Backend directory: {backend_dir}")
+    print(f"Project directory: {project_dir}")
 
     # Handle binary download
     if not args.only_model:
@@ -323,14 +327,14 @@ def main():
 
         for d in devices_to_download:
             try:
-                download_binary(plat, d, backend_dir, force=args.force)
+                download_binary(plat, d, project_dir, force=args.force)
             except Exception as e:
                 print(f"[Warning] Could not setup binary for device '{d}': {e}")
 
     # Handle model downloads
     if not args.only_binary:
-        download_speech_model(backend_dir, force=args.force)
-        download_vad_model(backend_dir, force=args.force)
+        download_speech_model(project_dir, force=args.force)
+        download_vad_model(project_dir, force=args.force)
 
     print("\n[Done] Setup complete! You can now run 'python app.py' or 'python run_transcription.py <audio_file>'.")
 

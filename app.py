@@ -14,10 +14,10 @@ import database
 import device_utils
 
 # Base paths
-BACKEND_DIR = Path(__file__).resolve().parent
-STATIC_DIR = BACKEND_DIR / "static"
+PROJECT_DIR = Path(__file__).resolve().parent
+STATIC_DIR = PROJECT_DIR / "static"
 ASSETS_DIR = STATIC_DIR / "assets"
-OUTPUT_DIR = BACKEND_DIR / "output"
+OUTPUT_DIR = PROJECT_DIR / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Initialize SQLite database

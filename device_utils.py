@@ -1,5 +1,5 @@
 """
-Device and binary discovery utilities for CrispASR backend.
+Device and binary discovery utilities for CrispASR pipeline.
 Provides cross-platform (Windows & Linux) detection for CPU and CUDA binaries and models.
 """
 
@@ -10,14 +10,18 @@ from pathlib import Path
 from typing import Tuple, Dict, Any, Optional, List
 
 
-def get_backend_dir() -> Path:
+def get_project_dir() -> Path:
     """
-    Returns the absolute path to the backend directory.
+    Returns the absolute path to the project directory.
     
     Returns:
         Path: Absolute path to the directory containing this file.
     """
     return Path(__file__).resolve().parent
+
+
+# For backward compatibility if imported elsewhere
+get_backend_dir = get_project_dir
 
 
 def get_platform_name() -> str:
@@ -93,7 +97,7 @@ def find_crispasr_binary(device: str = "auto") -> Tuple[str, str, bool]:
     Raises:
         FileNotFoundError: If no crispasr binary can be found in any candidate folder.
     """
-    backend_dir = get_backend_dir()
+    project_dir = get_project_dir()
     cwd = Path.cwd()
     candidate_names = _get_candidate_binary_names()
     
@@ -101,15 +105,15 @@ def find_crispasr_binary(device: str = "auto") -> Tuple[str, str, bool]:
     
     # Candidate directories
     cuda_dirs = [
-        backend_dir / "bin" / "cuda",
+        project_dir / "bin" / "cuda",
         cwd / "bin" / "cuda",
     ]
     cpu_dirs = [
-        backend_dir / "bin" / "cpu",
+        project_dir / "bin" / "cpu",
         cwd / "bin" / "cpu",
     ]
     fallback_dirs = [
-        backend_dir / "bin",
+        project_dir / "bin",
         cwd / "bin",
     ]
     
@@ -154,7 +158,7 @@ def find_crispasr_binary(device: str = "auto") -> Tuple[str, str, bool]:
         else:
             raise FileNotFoundError(
                 f"CrispASR binary not found for device 'cuda'. Please place the executable in "
-                f"'{backend_dir / 'bin' / 'cuda'}' or '{backend_dir / 'bin' / 'cpu'}'."
+                f"'{project_dir / 'bin' / 'cuda'}' or '{project_dir / 'bin' / 'cpu'}'."
             )
 
     elif device_lower == "cpu":
@@ -170,7 +174,7 @@ def find_crispasr_binary(device: str = "auto") -> Tuple[str, str, bool]:
         else:
             raise FileNotFoundError(
                 f"CrispASR binary not found for device 'cpu'. Please place the executable in "
-                f"'{backend_dir / 'bin' / 'cpu'}'."
+                f"'{project_dir / 'bin' / 'cpu'}'."
             )
 
     else:  # 'auto'
@@ -185,7 +189,7 @@ def find_crispasr_binary(device: str = "auto") -> Tuple[str, str, bool]:
         else:
             raise FileNotFoundError(
                 f"CrispASR binary not found in 'bin/cpu', 'bin/cuda', or 'bin'. "
-                f"Please ensure crispasr executable exists in {backend_dir / 'bin' / 'cpu'} or {backend_dir / 'bin' / 'cuda'}."
+                f"Please ensure crispasr executable exists in {project_dir / 'bin' / 'cpu'} or {project_dir / 'bin' / 'cuda'}."
             )
 
 
@@ -202,34 +206,34 @@ def find_model_path(requested_path: Optional[str] = None) -> str:
     Raises:
         FileNotFoundError: If no GGUF model file can be found.
     """
-    backend_dir = get_backend_dir()
+    project_dir = get_project_dir()
     cwd = Path.cwd()
     
     # 1. If explicit path exists, return it
     if requested_path:
         p = Path(requested_path)
         if not p.is_absolute():
-            # Check relative to cwd and relative to backend_dir
+            # Check relative to cwd and relative to project_dir
             if (cwd / p).is_file():
                 return str((cwd / p).resolve())
-            if (backend_dir / p).is_file():
-                return str((backend_dir / p).resolve())
+            if (project_dir / p).is_file():
+                return str((project_dir / p).resolve())
         elif p.is_file():
             return str(p.resolve())
             
     # 2. Check standard candidate paths
     candidates = [
-        backend_dir / "models" / "speech-model.gguf",
-        backend_dir / "models" / "ggufs" / "speech-model.gguf",
+        project_dir / "models" / "speech-model.gguf",
+        project_dir / "models" / "ggufs" / "speech-model.gguf",
         cwd / "models" / "speech-model.gguf",
-        cwd / "backend" / "models" / "speech-model.gguf",
+        cwd / "models" / "ggufs" / "speech-model.gguf",
     ]
     for c in candidates:
         if c.is_file():
             return str(c.resolve())
             
     # 3. Check for any .gguf in models directory
-    models_dir = backend_dir / "models"
+    models_dir = project_dir / "models"
     if models_dir.is_dir():
         for f in models_dir.glob("*.gguf"):
             if f.is_file():
@@ -241,7 +245,7 @@ def find_model_path(requested_path: Optional[str] = None) -> str:
                     return str(f.resolve())
                     
     # Return default path if not found
-    fallback = backend_dir / "models" / "speech-model.gguf"
+    fallback = project_dir / "models" / "speech-model.gguf"
     return str(fallback)
 
 
@@ -282,11 +286,11 @@ def get_system_capabilities() -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: Summary of OS, CPU binary status, and CUDA binary status.
     """
-    backend_dir = get_backend_dir()
+    project_dir = get_project_dir()
     candidate_names = _get_candidate_binary_names()
     
-    has_cuda = _search_in_directory(backend_dir / "bin" / "cuda", candidate_names) is not None
-    has_cpu = _search_in_directory(backend_dir / "bin" / "cpu", candidate_names) is not None
+    has_cuda = _search_in_directory(project_dir / "bin" / "cuda", candidate_names) is not None
+    has_cpu = _search_in_directory(project_dir / "bin" / "cpu", candidate_names) is not None
     
     model_found = False
     try:
